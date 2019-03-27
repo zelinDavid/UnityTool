@@ -56,8 +56,9 @@ local tab = {23, -99, 18, -4, 2, 1, 23, 43, 9, -9, 6, 888, 23, -99, 18}
     return max 
 end
 
+ 
 local max = divid(1, #tab, tab)
 
-for k,v in pairs(max) do
-    print(k,v)
-end
+ 
+
+ 
