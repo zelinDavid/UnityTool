@@ -1,39 +1,140 @@
-dump = function(tab)
-    local str = table.concat(tab, " ")
-    print(str)
+local sort = {
+
+}
+
+local dump = function (  tab )
+    if type(tab) == "table" then 
+        print(table.concat(tab," "))
+    end 
 end
 
-local Swap = function(arr, i, j)
-    arr[i], arr[j] = arr[j], arr[i]
-    -- dump(arr)
+function sort.quickSort( list, compareFunc )
+    -- 第一种算法
+    sort.quickSort1(list, 1, #list, compareFunc)
+    -- 第二种算法
+    -- sort.quickSort2(list, 1, #list, compareFunc)
 end
 
-local Partition = function(arr, left, right)
-    pivot = arr[right]
-    tail = left - 1
+--递归调用，快速排序
+--@param list 数据
+--@param left 左下标
+--@param right 右下标
+--@param compareFunc 比较函数
+function sort.quickSort1( list, left, right, compareFunc )
+    if left < right then
+        local k = sort.split1(list, left, right, compareFunc)
+        sort.quickSort1(list, left, k - 1, compareFunc)
+        sort.quickSort1(list, k , right, compareFunc)
+        print("k",k)
+    end
+end
 
-    for i = left, right - 1 do
-        if arr[i] <= pivot then
-            tail = tail + 1
-            Swap(arr, tail, i)
+--按枢纽元划分序列（取第一个值为枢纽元）
+--@param list 数据
+--@param left 左下标
+--@param right 右下标
+--@param compareFunc 比较函数
+--@return 枢纽元位置
+function sort.split1( list, left, right, compareFunc )
+    --选用第一个值为枢纽元
+    local pivot = list[left] 
+    local i = left
+    local k = left
+    for k = left + 1, right do
+        if compareFunc(list[k], pivot) then
+            i = i + 1
+            if i ~= k then
+                list[i], list[k] = list[k], list[i]
+            end
         end
     end
-    Swap(arr, tail + 1, right)
-    return tail + 1
+    list[left], list[i] = list[i], list[left]
+    return i
 end
 
-QuickSort = function(arr, left, right)
-    if left >= right then
-        return
+------------------------------------------------------------------------------------------------
+
+--递归调用，快速排序
+--@param list 数据
+--@param left 左下标
+--@param right 右下标
+--@param compareFunc 比较函数
+function sort.quickSort2( list, left, right, compareFunc )
+    if left < right then
+        local k = sort.split2(list, left, right, compareFunc)
+        -- dump(list)
+        -- print(k)
+        sort.quickSort2(list, left, k - 1, compareFunc)
+        sort.quickSort2(list, k + 1, right, compareFunc)
     end
-    pivot_index = Partition(arr, left, right)
-    QuickSort(arr, left, pivot_index - 1)
-    QuickSort(arr, pivot_index + 1, right)
 end
 
 
-tab  = { 5, 2, 9, 4, 7, 6, 1, 3, 8 }; 
+--按枢纽元划分序列（选用三数中指分割为枢纽元）
+--@param list 数据
+--@param left 左下标
+--@param right 右下标
+--@param compareFunc 比较函数
+--@return 枢纽元位置
+function sort.split2( list, left, right, compareFunc )
+    --选用三数中指分割为枢纽元
+    local pivot, k = sort.midian3(list, left, right, compareFunc)
+    local i = left
+    local j = k
+    -- dump(list)
+    -- print(pivot, i, j)
+    while true do
+        i = i + 1
+        while compareFunc(list[i], pivot) and i < k do
+            i = i + 1
+        end
+        j = j - 1
+        while compareFunc(pivot, list[j]) and j > left do
+            j = j - 1
+        end
+        if i < j then
+            list[i], list[j] = list[j], list[i]
+        else
+            break
+        end
+    end
+    list[i], list[k] = list[k], list[i]
+    return i
+end
 
-QuickSort(tab, 1,#tab);
- 
-dump(tab)
+
+--三数中指分割
+--@desc 避免选出劣质枢纽元，当数组是预排序的或是反排序时，
+--@desc 枢纽元选择影响快速排序的时间，劣质的枢纽元的选择，快速排序时间可能是二次的
+--@param list 数据
+--@param left 左下标
+--@param right 右下标
+--@param compareFunc 比较函数
+function sort.midian3( list, left, right, compareFunc )
+    if left == right then
+        return list[right], right
+    end
+    local center = math.floor((left + right) / 2)
+    if compareFunc(list[center], list[left]) then
+        list[left], list[center] = list[center], list[left]
+    end
+    if compareFunc(list[right], list[left]) then
+        list[left], list[right] = list[right], list[left]
+    end
+    if compareFunc(list[right], list[center]) then
+        list[center], list[right] = list[right], list[center]
+    end
+    list[center], list[right - 1] = list[right - 1], list[center]
+    return list[right - 1], right - 1
+end
+
+print("------------------------------insert sort----------------------------------")
+local list = {1,4,25,764, 34, 645, 67, 6354, 34,}
+print("---------------------------begin")
+dump(list)
+sort.quickSort(list, function ( a, b )
+    return a < b
+end)
+print("-----------------------------end")
+dump(list)
+
