@@ -21,13 +21,32 @@
      /// </summary>
      private List<Item> itemList;
 
-     // #region ToolTip
-     // private ToolTip toolTip;
+     #region ToolTip
+     private ToolTip toolTip;
 
-     // private bool isToolTipShow = false;
+     private bool isToolTipShow = false;
 
-     // private Vector2 toolTipPosionOffset = new Vector2 (10, -10);
-     // #endregion
+     private Vector2 toolTipPosionOffset = new Vector2 (10, -10);
+     #endregion
+
+     #region PickedItem
+     private bool isPickedItem = false;
+
+     public bool IsPickedItem {
+         get {
+             return isPickedItem;
+         }
+     }
+
+     private ItemUI pickedItem; //鼠标选中的物体
+
+     public ItemUI PickedItem {
+         get {
+             return pickedItem;
+         }
+     }
+
+     #endregion
 
      private Canvas canvas;
 
@@ -36,11 +55,33 @@
      }
 
      void Start () {
-         // toolTip = GameObject.FindObjectOfType<ToolTip>();
+         toolTip = GameObject.Find ("Canvas/ToolTip").GetComponent<ToolTip> ();
          canvas = GameObject.Find ("Canvas").GetComponent<Canvas> ();
 
-         // pickedItem = GameObject.Find("PickedItem").GetComponent<ItemUI>();
-         // pickedItem.Hide();
+         pickedItem = GameObject.Find ("PickedItem").GetComponent<ItemUI> ();
+         pickedItem.Hide ();
+     }
+
+     private void Update () {
+         if (isPickedItem) {
+             //如果我们捡起了物体,我们就要让物品跟随鼠标
+             Vector2 position;
+             RectTransformUtility.ScreenPointToLocalPointInRectangle (canvas.transform as RectTransform, Input.mousePosition, null, out position);
+             pickedItem.SetLocalPosition (position);
+         } else if (isToolTipShow) {
+             Vector2 position;
+             RectTransformUtility.ScreenPointToLocalPointInRectangle (canvas.transform as RectTransform, Input.mousePosition, null, out position);
+             toolTip.SetLocation (position + toolTipPosionOffset);
+         }
+
+         //物品丢弃的处理
+
+         if (isPickedItem && Input.GetMouseButtonDown (0) && UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject () == false) {
+
+             isPickedItem = false;
+             PickedItem.Hide ();
+         }
+
      }
 
      private void ParseItemJson () {
@@ -91,9 +132,23 @@
                      break;
              }
              itemList.Add (item);
-
          }
+     }
 
+     //捡起物品槽指定数量的物品
+     public void PickupItem (Item item, int amount) {
+         pickedItem.SetItem (item, amount);
+         isPickedItem = true;
+         pickedItem.Show ();
+         Vector2 localposition;
+         RectTransformUtility.ScreenPointToLocalPointInRectangle (canvas.transform as RectTransform, Input.mousePosition, null, out localposition);
+         pickedItem.SetLocalPosition (localposition);
+
+     }
+
+     public void HideToolTip () {
+         toolTip.Hide ();
+         isToolTipShow = false;
      }
 
      public Item GetItemById (int id) {
@@ -106,9 +161,11 @@
      }
 
      public void ShowToolTip (string content) {
-         
+         toolTip.Show (content);
+         Vector2 localposition;
+         RectTransformUtility.ScreenPointToLocalPointInRectangle (canvas.transform as RectTransform, Input.mousePosition, null, out localposition);
+         toolTip.SetLocation (localposition);
+         isToolTipShow = true;
      }
-
-     
 
  }

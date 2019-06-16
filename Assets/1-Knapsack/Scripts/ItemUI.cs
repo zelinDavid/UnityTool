@@ -44,7 +44,7 @@ public class ItemUI : MonoBehaviour {
         this.Item = item;
         this.Amount = account;
 
-        ItemImage.sprite = Resources.Load<Sprite> (item.Sprite);
+        ItemImage.sprite = Resources.Load<Sprite>(item.Sprite);
         if (Item.Capacity > 1) {
             AmoutText.text = account.ToString ();
         } else {
@@ -93,6 +93,7 @@ public class ItemUI : MonoBehaviour {
         gameObject.SetActive (true);
     }
     public void Hide () {
+        
         gameObject.SetActive (false);
     }
 
