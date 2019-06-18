@@ -21,7 +21,7 @@ namespace XLua.CSObjectWrap
         {
 			ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
 			System.Type type = typeof(UnityEngine.Light);
-			Utils.BeginObjectRegister(type, L, translator, 0, 8, 25, 24);
+			Utils.BeginObjectRegister(type, L, translator, 0, 8, 26, 25);
 			
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "Reset", _m_Reset);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "SetLightDirty", _m_SetLightDirty);
@@ -35,6 +35,7 @@ namespace XLua.CSObjectWrap
 			
 			Utils.RegisterFunc(L, Utils.GETTER_IDX, "type", _g_get_type);
             Utils.RegisterFunc(L, Utils.GETTER_IDX, "spotAngle", _g_get_spotAngle);
+            Utils.RegisterFunc(L, Utils.GETTER_IDX, "innerSpotAngle", _g_get_innerSpotAngle);
             Utils.RegisterFunc(L, Utils.GETTER_IDX, "color", _g_get_color);
             Utils.RegisterFunc(L, Utils.GETTER_IDX, "colorTemperature", _g_get_colorTemperature);
             Utils.RegisterFunc(L, Utils.GETTER_IDX, "intensity", _g_get_intensity);
@@ -61,6 +62,7 @@ namespace XLua.CSObjectWrap
             
 			Utils.RegisterFunc(L, Utils.SETTER_IDX, "type", _s_set_type);
             Utils.RegisterFunc(L, Utils.SETTER_IDX, "spotAngle", _s_set_spotAngle);
+            Utils.RegisterFunc(L, Utils.SETTER_IDX, "innerSpotAngle", _s_set_innerSpotAngle);
             Utils.RegisterFunc(L, Utils.SETTER_IDX, "color", _s_set_color);
             Utils.RegisterFunc(L, Utils.SETTER_IDX, "colorTemperature", _s_set_colorTemperature);
             Utils.RegisterFunc(L, Utils.SETTER_IDX, "intensity", _s_set_intensity);
@@ -448,6 +450,20 @@ namespace XLua.CSObjectWrap
         }
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _g_get_innerSpotAngle(RealStatePtr L)
+        {
+		    try {
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+			
+                UnityEngine.Light gen_to_be_invoked = (UnityEngine.Light)translator.FastGetCSObj(L, 1);
+                LuaAPI.lua_pushnumber(L, gen_to_be_invoked.innerSpotAngle);
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            return 1;
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
         static int _g_get_color(RealStatePtr L)
         {
 		    try {
@@ -795,6 +811,21 @@ namespace XLua.CSObjectWrap
 			
                 UnityEngine.Light gen_to_be_invoked = (UnityEngine.Light)translator.FastGetCSObj(L, 1);
                 gen_to_be_invoked.spotAngle = (float)LuaAPI.lua_tonumber(L, 2);
+            
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            return 0;
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _s_set_innerSpotAngle(RealStatePtr L)
+        {
+		    try {
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+			
+                UnityEngine.Light gen_to_be_invoked = (UnityEngine.Light)translator.FastGetCSObj(L, 1);
+                gen_to_be_invoked.innerSpotAngle = (float)LuaAPI.lua_tonumber(L, 2);
             
             } catch(System.Exception gen_e) {
                 return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
